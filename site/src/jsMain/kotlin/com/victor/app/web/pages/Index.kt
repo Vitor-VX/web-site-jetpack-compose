@@ -1,183 +1,96 @@
 package com.victor.app.web.pages
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.Transition
-import com.varabyte.kobweb.compose.css.Width
-import com.varabyte.kobweb.compose.foundation.layout.*
+import com.varabyte.kobweb.compose.css.functions.*
+import com.varabyte.kobweb.compose.foundation.layout.Arrangement
+import com.varabyte.kobweb.compose.foundation.layout.Box
+import com.varabyte.kobweb.compose.foundation.layout.Column
+
+import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.*
 import com.varabyte.kobweb.compose.ui.modifiers.*
 import com.varabyte.kobweb.core.Page
+import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.icons.fa.*
+import com.varabyte.kobweb.silk.components.layout.*
 import com.varabyte.kobweb.silk.style.CssStyle
-import com.varabyte.kobweb.silk.style.selectors.focus
+import com.varabyte.kobweb.silk.style.animation.Keyframes
 import com.varabyte.kobweb.silk.style.selectors.hover
 import com.varabyte.kobweb.silk.style.toModifier
-import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.placeholder
+import com.victor.app.web.components.ContentApp
+import com.victor.app.web.components.HeaderApp
+import com.victor.app.web.components.TextApp.TextDescriptionProjectContentApp
+import com.victor.app.web.components.TextApp.TextHeaderName
+import com.victor.app.web.components.TextApp.TextPresentationContentApp
+import com.victor.app.web.components.TextApp.TextProjectContentApp
+import com.victor.app.web.components.TextApp.TextStyleContentApp
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.dom.P
+import org.jetbrains.compose.web.dom.Text
 
-val ButtonStyleApp = CssStyle {
-    base {
-        Modifier
-            .backgroundColor(rgb(98, 0, 238))
-            .fontFamily("Roboto")
-            .color(Color.white)
-            .padding(10.px, 18.px)
-            .border(0.px)
-            .borderRadius(8.px)
-            .transition(Transition.of("background-color", 300.ms, AnimationTimingFunction.EaseInOut))
-            .fontSize(16.px)
-    }
-    hover {
-        Modifier
-            .backgroundColor(rgb(55, 0, 179))
-            .boxShadow(offsetX = 0.px, offsetY = 6.px, blurRadius = 12.px, color = rgba(0, 0, 0, 0.3))
-    }
+data class SocialMedia(
+    val name: String,
+    val url: String,
+    val icon: @Composable () -> Unit
+)
+
+val blinkAnimation = Keyframes {
+    from { Modifier.opacity(0f) }
+    to { Modifier.opacity(1f) }
 }
 
-val ColumnStyle = CssStyle {
-    base {
-        Modifier
-            .backgroundColor(color = Color("#FFF"))
-            .border(0.px)
-            .padding(32.px)
-            .borderRadius(12.px)
-            .width(80.percent)
-            .maxWidth(450.px)
-            .minWidth(300.px)
-    }
-    hover {
-        Modifier
-            .padding(3.px)
-            .transition(Transition.of("padding", 300.ms))
-    }
-}
 
-val InputStyle = CssStyle {
-    base {
-        Modifier
-            .backgroundColor(rgb(245, 245, 245))
-            .border(2.px, color = rgb(200, 200, 200))
-            .padding(10.px)
-            .borderRadius(6.px)
-            .fontFamily("Roboto")
-            .color(rgb(30, 30, 30))
-            .fontSize(15.px)
-            .width(100.percent)
-            .maxWidth(600.px)
-    }
-    focus {
-        Modifier.border(2.px, color = rgb(100, 100, 255), style = LineStyle.None)
-    }
-}
+data class ProjectData(
+    val icon: String,
+    val title: String,
+    val description: String,
+    val url: String,
+    val tags: List<String>,
+    var isBuy: Boolean = false
+)
 
 @Composable
-fun LicenseDeveloper(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+fun Copyrigth(modifier: Modifier) {
+    Row(
+        modifier = modifier.margin(top = 100.px),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        FaCopyright(
+            modifier = Modifier.color(Color.gray)
+        )
+
         P(
-            attrs = Modifier
+            attrs = TextStyleContentApp
+                .toModifier()
+                .margin(0.px)
                 .fontFamily("Roboto")
-                .fontSize(14.px)
                 .color(Color.gray)
+                .fontSize(13.px)
                 .toAttrs()
         ) {
-            Text("Licensed by Vitor VX")
+            Text("Todos os direitos reservados")
         }
-
-        FaGithub(
-            modifier = Modifier,
-            size = IconSize.LG
-        )
     }
 }
 
 @Page
 @Composable
 fun HomePage() {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
     Box(
         modifier = Modifier
+            .backgroundColor(color = Color("#000000"))
             .fillMaxSize()
-            .backgroundColor(Color("#f2f2f2"))
     ) {
         Column(
-            modifier = ColumnStyle.toModifier()
-                .align(Alignment.Center)
-                .padding(16.px)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 10.px)
         ) {
-            P(
-                attrs = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .fontSize(28.px)
-                    .fontFamily("Poppins")
-                    .color(Color("#333"))
-                    .toAttrs()
-            ) {
-                Text("Login")
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .margin(bottom = 12.px),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.px)
-            ) {
-                FaEnvelope(
-                    size = IconSize.LG
-                )
-
-                Input(
-                    type = InputType.Text,
-                    attrs = InputStyle.toModifier()
-                        .boxShadow(offsetX = 0.px, offsetY = 2.px, blurRadius = 5.px, color = rgba(0, 0, 0, 0.1))
-                        .toAttrs {
-                            this.placeholder("Email")
-                            this.onInput { username = it.value }
-                        }
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .margin(bottom = 12.px),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.px)
-            ) {
-                FaLock(
-                    size = IconSize.LG
-                )
-
-                Input(
-                    type = InputType.Password,
-                    attrs = InputStyle.toModifier()
-                        .boxShadow(offsetX = 0.px, offsetY = 2.px, blurRadius = 5.px, color = rgba(0, 0, 0, 0.1))
-                        .toAttrs {
-                            placeholder("Password")
-                            onInput { password = it.value }
-                        }
-                )
-            }
-
-            Button(
-                attrs = ButtonStyleApp.toModifier()
-                    .fillMaxWidth()
-                    .margin(top = 20.px, bottom = 20.px)
-                    .toAttrs()
-            ) {
-                Text("Login")
-            }
+            HeaderApp()
+            ContentApp(modifier = Modifier.align(Alignment.CenterHorizontally).margin(top = 70.px))
+            Copyrigth(modifier = Modifier.align(Alignment.CenterHorizontally))
         }
-
-        LicenseDeveloper(
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
     }
 }
